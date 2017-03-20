@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MyWebAPI.Controllers
 {
-  
+
 
     public class PersonsController : Controller
     {
         private PersonsDb Pdb;
 
-        
+
 
         public PersonsController(PersonsDb pdb)
         {
@@ -42,7 +42,7 @@ namespace MyWebAPI.Controllers
 
         public IActionResult SelectPerson(int id)
         {
-            var personId = Pdb.Persons.FirstOrDefault(p=> p.JMGB == id);
+            var personId = Pdb.Persons.FirstOrDefault(p => p.JMGB == id);
 
             if (personId == null)
             {
@@ -50,30 +50,37 @@ namespace MyWebAPI.Controllers
             }
 
             return Ok(personId);
-
         }
 
-        [HttpGet("persons/{searchString}")]
+        [HttpPost("persons/{searchString}")]
 
-        public async Task<IActionResult> searchPerson(string searchString)
-            {
+        public IActionResult searchPerson(string searchString)
+        {
             var persons = from p in Pdb.Persons
-                         select p;
+                          select p;
 
             if (!String.IsNullOrEmpty(searchString))
             {
                 persons = persons.Where(s => s.FirstName.Contains(searchString));
             }
-            return View(await persons.ToListAsync());
+            return Ok(persons);
 
         }
+        [HttpPost("persons{orderBy}")]
+        public IActionResult SortPersons(string orderBy )
+        {
+            var persons = from p in Pdb.Persons
+                          select p;
 
-
-
-
-
-
-
-
+            if (orderBy == "ascending")
+            {
+                persons = persons.OrderBy(p=>p.LastName);
+            }
+            else if (orderBy == "descending")
+            {
+                persons = persons.OrderByDescending(p=>p.LastName);
+            }
+            return Ok(persons);
+        }
     }
 }
