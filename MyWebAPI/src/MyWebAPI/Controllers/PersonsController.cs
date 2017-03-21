@@ -66,7 +66,7 @@ namespace MyWebAPI.Controllers
             return Ok(persons);
 
         }
-        [HttpPost("persons/{orderBy}")]
+        [HttpPost("persons/order/{orderBy}")]
         public IActionResult SortPersons(string orderBy )
         {
             var persons = from p in Pdb.Persons
