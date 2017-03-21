@@ -38,9 +38,9 @@ namespace MyWebAPI.Controllers
             return Ok(Pdb.Persons.ToList());
         }
 
-        [HttpGet("persons/{id}")]
+        [HttpGet("person/{id}")]
 
-        public IActionResult SelectPerson(int id)
+        public IActionResult SelectPerson(long id)
         {
             var personId = Pdb.Persons.FirstOrDefault(p => p.JMGB == id);
 
@@ -52,35 +52,34 @@ namespace MyWebAPI.Controllers
             return Ok(personId);
         }
 
-        [HttpPost("persons/{searchString}")]
+        [HttpGet("persons")]
 
-        public IActionResult searchPerson(string searchString)
+        public IActionResult SearchAndSortPersons([FromQuery]string searchString, [FromQuery]string orderBy, [FromQuery]int page, [FromQuery]int personsPerPage)
         {
             var persons = from p in Pdb.Persons
                           select p;
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (searchString != null)
             {
                 persons = persons.Where(s => s.FirstName.Contains(searchString));
             }
-            return Ok(persons);
-
-        }
-        [HttpPost("persons/order/{orderBy}")]
-        public IActionResult SortPersons(string orderBy )
-        {
-            var persons = from p in Pdb.Persons
-                          select p;
 
             if (orderBy == "ascending")
             {
-                persons = persons.OrderBy(p=>p.LastName);
+                persons = persons.OrderBy(p => p.LastName);
             }
             else if (orderBy == "descending")
             {
-                persons = persons.OrderByDescending(p=>p.LastName);
+                persons = persons.OrderByDescending(p => p.LastName);
+            }
+
+            personsPerPage = 2;
+            if (page > 0)
+            {
+                persons = persons.Skip((page - 1) * personsPerPage).Take(personsPerPage);
             }
             return Ok(persons);
         }
+    
     }
 }

@@ -19,7 +19,7 @@ namespace MyWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            var connection = @"Server=MYPC\SQLEXPRESS;Database=MyWebAPIDB;Trusted_Connection=True;";
+            var connection = @"Server=C08\SQLEXPRESS;Database=MyWebAPIDB;Trusted_Connection=True;";
             services.AddDbContext<PersonsDb>(options => options.UseSqlServer(connection));
 
         }
