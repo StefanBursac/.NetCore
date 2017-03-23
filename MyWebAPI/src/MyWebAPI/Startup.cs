@@ -21,7 +21,6 @@ namespace MyWebAPI
             services.AddMvc();
             var connection = @"Server=C08\SQLEXPRESS;Database=MyWebAPIDB;Trusted_Connection=True;";
             services.AddDbContext<PersonsDb>(options => options.UseSqlServer(connection));
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

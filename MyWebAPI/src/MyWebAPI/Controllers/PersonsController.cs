@@ -80,6 +80,21 @@ namespace MyWebAPI.Controllers
             }
             return Ok(persons);
         }
-    
+
+        [HttpPost("persons/login")]
+
+        public JsonResult Login(string user, string pass)
+        {
+            return new JsonResult(null);
+        }
+
+        [HttpPost("persons/Add")]
+        public JsonResult Add(Person person)
+
+        {
+        }
+
     }
+    
+
 }
