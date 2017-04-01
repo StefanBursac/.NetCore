@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MyWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace MyWebAPI.Controllers
 {
@@ -13,13 +14,13 @@ namespace MyWebAPI.Controllers
     public class PersonsController : Controller
     {
         private PersonsDb Pdb;
-
-
-
-        public PersonsController(PersonsDb pdb)
+        private UserManager<User> _userManager;
+        public PersonsController(PersonsDb pdb, UserManager<User> userManager)
         {
             Pdb = pdb;
+            _userManager = userManager;
         }
+
 
         [HttpGet]
         [Route("persons/createdatabase")]
@@ -38,7 +39,7 @@ namespace MyWebAPI.Controllers
             return Ok(Pdb.Persons.ToList());
         }
 
-        [HttpGet("person/{id}")]
+        [HttpGet("persons/person/{id}")]
 
         public IActionResult SelectPerson(long id)
         {
@@ -81,20 +82,91 @@ namespace MyWebAPI.Controllers
             return Ok(persons);
         }
 
-        [HttpPost("persons/login")]
-
-        public JsonResult Login(string user, string pass)
+        [HttpPost("persons/addperson")]
+        public JsonResult AddPerson([FromBody]Person person)
         {
-            return new JsonResult(null);
+            Pdb.Add(person);
+            Pdb.SaveChanges();
+
+            return new JsonResult(person);
         }
 
-        [HttpPost("persons/Add")]
-        public JsonResult Add(Person person)
-
+        [HttpDelete("persons/deleteperson/{id}")]
+        public IActionResult DeletePerson(long id)
         {
+            var personId = Pdb.Persons.FirstOrDefault(p => p.JMGB == id);
+
+            if (personId == null)
+            {
+                return NotFound();
+            }
+            
+            Pdb.Remove(personId);
+            Pdb.SaveChanges();
+
+            return Ok("Person is deleted");
         }
 
+        [HttpPut("persons/updateperson/{id}")]
+        public ActionResult UpdatePerson(long id, [FromBody] Person person)
+        {
+            if (person == null || person.JMGB != id)
+            {
+                return BadRequest();
+            }
+
+            var updatedPerson = Pdb.Persons.Find(id);
+            if (person == null)
+            {
+                return NotFound();
+            }
+            updatedPerson.FirstName = person.FirstName;
+            updatedPerson.LastName = person.LastName;
+            updatedPerson.Gender = person.Gender;
+            updatedPerson.Occupation = person.Occupation;
+
+            Pdb.Update(updatedPerson);
+            Pdb.SaveChanges();
+
+            return Ok(updatedPerson);
+        }
+
+        [HttpPut("persons/updateperson2")]
+        public ActionResult UpdatePerson2([FromBody] Person person)     
+        {
+
+            var updatedPerson = Pdb.Persons.Find(person.JMGB);
+
+            updatedPerson.JMGB = person.JMGB;
+            updatedPerson.FirstName = person.FirstName;
+            updatedPerson.LastName = person.LastName;
+            updatedPerson.Gender = person.Gender;
+            updatedPerson.Occupation = person.Occupation;
+
+            Pdb.Update(updatedPerson);
+            Pdb.SaveChanges();
+
+            return Ok(updatedPerson);
+
+        }
+
+//----------------- ------------------AddUser------------------------------------------//
+
+        [HttpPost("adduser")]
+        public async Task AddUser()
+        {
+            var user = new User();
+            {
+                user.UserName = "StefanBursac";
+                user.Email = "stefan@stefan.com";
+            };
+
+            await _userManager.CreateAsync(user, "Passw0rd!");
+
+        }
+//-------------------------------------------------------------------------------------//
+ 
     }
-    
+
 
 }

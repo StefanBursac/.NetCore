@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using MyWebAPI.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MyWebAPI
 {
@@ -21,6 +22,12 @@ namespace MyWebAPI
             services.AddMvc();
             var connection = @"Server=C08\SQLEXPRESS;Database=MyWebAPIDB;Trusted_Connection=True;";
             services.AddDbContext<PersonsDb>(options => options.UseSqlServer(connection));
+
+            services.AddIdentity<User, IdentityRole>(config =>
+            {
+                config.User.RequireUniqueEmail = true;
+            })
+            .AddEntityFrameworkStores<PersonsDb>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,6 +39,9 @@ namespace MyWebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseIdentity();
+
 
             app.UseMvc();
 

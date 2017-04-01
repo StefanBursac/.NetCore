@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MyWebAPI.Models
 {
-    public class PersonsDb : DbContext
+    public class PersonsDb : IdentityDbContext<User>
     {
-        public PersonsDb(DbContextOptions<PersonsDb> options) : base (options)
+        public PersonsDb(DbContextOptions<PersonsDb> options) : base(options)
         {
             Database.EnsureCreated();
         }
