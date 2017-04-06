@@ -41,5 +41,15 @@ namespace MyWebAPI.Controllers
         return View();
         }
 
+        public async Task<ActionResult> Logout()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                await _signInManager.SignOutAsync();
+            }
+
+            return RedirectToAction("Login","Auth" );
+        }
+
     }
 }

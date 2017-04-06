@@ -48,9 +48,11 @@ namespace MyWebAPI
             })
             .AddEntityFrameworkStores<PersonsDb>();
 
-        // services.AddMvcCore()
-        //.AddAuthorization() // Note - this is on the IMvcBuilder, not the service collection
-        //.AddJsonFormatters(options => options.ContractResolver = new CamelCasePropertyNamesContractResolver());
+
+
+            // services.AddMvcCore()
+            //.AddAuthorization() // Note - this is on the IMvcBuilder, not the service collection
+            //.AddJsonFormatters(options => options.ContractResolver = new CamelCasePropertyNamesContractResolver());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,6 +72,8 @@ namespace MyWebAPI
                 LoginPath = new PathString("/Auth/login"),
                 AutomaticChallenge = true
             });
+
+            
 
             app.UseMvc();
 
