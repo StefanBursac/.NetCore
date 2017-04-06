@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MyWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyWebAPI.Controllers
 {
@@ -29,18 +30,14 @@ namespace MyWebAPI.Controllers
             return Ok();
         }
 
+        
         [HttpGet("persons/showdatabase")]
-
         public IActionResult ShowDB()
         {
-            //var Persons = from p in Pdb
-            //              select p;
-
             return Ok(Pdb.Persons.ToList());
         }
 
         [HttpGet("persons/person/{id}")]
-
         public IActionResult SelectPerson(long id)
         {
             var personId = Pdb.Persons.FirstOrDefault(p => p.JMGB == id);
@@ -54,7 +51,6 @@ namespace MyWebAPI.Controllers
         }
 
         [HttpGet("persons")]
-
         public IActionResult SearchAndSortPersons([FromQuery]string searchString, [FromQuery]string orderBy, [FromQuery]int page, [FromQuery]int personsPerPage)
         {
             var persons = from p in Pdb.Persons
@@ -82,7 +78,8 @@ namespace MyWebAPI.Controllers
             return Ok(persons);
         }
 
-        [HttpPost("persons/addperson")]
+        [Authorize]
+        [HttpPost("persons/addperson")]       
         public JsonResult AddPerson([FromBody]Person person)
         {
             Pdb.Add(person);
@@ -91,7 +88,8 @@ namespace MyWebAPI.Controllers
             return new JsonResult(person);
         }
 
-        [HttpDelete("persons/deleteperson/{id}")]
+        [Authorize]
+        [HttpDelete("persons/deleteperson/{id}")]  
         public IActionResult DeletePerson(long id)
         {
             var personId = Pdb.Persons.FirstOrDefault(p => p.JMGB == id);
@@ -107,6 +105,7 @@ namespace MyWebAPI.Controllers
             return Ok("Person is deleted");
         }
 
+        [Authorize]
         [HttpPut("persons/updateperson/{id}")]
         public ActionResult UpdatePerson(long id, [FromBody] Person person)
         {
@@ -131,6 +130,7 @@ namespace MyWebAPI.Controllers
             return Ok(updatedPerson);
         }
 
+        [Authorize]
         [HttpPut("persons/updateperson2")]
         public ActionResult UpdatePerson2([FromBody] Person person)     
         {
@@ -147,26 +147,24 @@ namespace MyWebAPI.Controllers
             Pdb.SaveChanges();
 
             return Ok(updatedPerson);
-
         }
 
-//----------------- ------------------AddUser------------------------------------------//
 
+//----------------- ------------------AddUser------------------------------------------//
+        
         [HttpPost("adduser")]
         public async Task AddUser()
         {
             var user = new User();
             {
-                user.UserName = "StefanBursac";
-                user.Email = "stefan@stefan.com";
+                user.UserName = "Stefan";
+                user.Email = "stefan@s.com";
             };
 
-            await _userManager.CreateAsync(user, "Passw0rd!");
+            await _userManager.CreateAsync(user, "P@ssw0rd!");
 
         }
-//-------------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------//
  
     }
-
-
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyWebAPI.Controllers 
 {
+    [Route("Auth")]
     public class AuthController : Controller
     {
     private SignInManager<User> _signInManager;
@@ -17,21 +18,16 @@ namespace MyWebAPI.Controllers
     {
         _signInManager = signInManager;
     }
-
+    
+    [HttpGet("Login")]
     public IActionResult Login()
     {
         return View();
     }
-
-    [HttpGet ("login")]
-    public ActionResult ShowView()
-    {
-        return View("Views/Login.cshtml");
-    }
-
        
+        [HttpPost("Login")]
         public async Task<ActionResult> Login(LoginViewModel vm)
-    {
+        {
         if (ModelState.IsValid)
         {
             var signInResults = await _signInManager.PasswordSignInAsync(vm.Username, vm.Password, true, false);
@@ -39,12 +35,11 @@ namespace MyWebAPI.Controllers
 
             if (signInResults.Succeeded)
             {
-                return RedirectToAction("Views/LogedIn.cshtml");
+                    RedirectToAction("ShowPage","Moj");      //return View("Views/Auth/LogedIn.cshtml");
             }
         }
-        return View("Views/LogedIn.cshtml");
+        return View();
+        }
 
     }
-
-}
 }
